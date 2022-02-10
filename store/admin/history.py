@@ -7,10 +7,12 @@ from store.models import History
 @admin.register(History)
 class HistoryAdmin(admin.ModelAdmin):
     actions = ['do_calc']
+    readonly_fields = ['enter_to_polygon', 'can_ship_to_store', 'parse_coordinates']
     list_display = [
         'store', 'cargo',
         'tipper_number', 'tipper_model', 'max_mass', 'current_mass',
         'has_overload', 'overload', 'coordinates',
+        'enter_to_polygon',
         'characteristics',
     ]
     list_editable = ['coordinates']
@@ -49,20 +51,29 @@ class HistoryAdmin(admin.ModelAdmin):
         return 'SiO2: {} %, Fe: {} %'.format(instance.cargo.sio2, instance.cargo.fe)
     characteristics.short_description = 'Хар-ки'
 
+    def enter_to_polygon(self, instance):
+        return instance.enter_to_polygon
+    enter_to_polygon.boolean = True
+    enter_to_polygon.short_description = '!'
+
     # actions
 
     def do_calc(self, request, queryset):
         for q in queryset:
-            if q.can_ship_to_store():
-                new_mass = q.store.mass + q.cargo.mass
-                characteristics_after_unloading = 'SiO2: {} %, Fe: {} %'.format(888, 888)
+            if q.can_ship_to_store:
+                new_mass = q.calc_mass()
+                characteristics = q.calc_characteristics()
+                characteristics_after_unloading = 'SiO2: {} %, Fe: {} %'.format(
+                    characteristics['sio2'],
+                    characteristics['fe']
+                )
 
                 html = mark_safe('''
                 <i>Груз {cargo} успешно может быть доставлен на склад!</i><br>
                 Название склада: <b>{store}</b><br> 
                 Объем до разгрузки, т: <b>{current_mass}</b><br>
                 Объем после разгрузки, т: <b>{new_mass}</b><br>
-                Качественные характеристики после разгрузки: <b>{characteristics_after_unloading}</b><br>'''.format(
+                Качественные характеристики после разгрузки: <b>{characteristics_after_unloading}</b>'''.format(
                     cargo=q.cargo,
                     store=q.store.title,
                     current_mass=q.store.mass,
@@ -73,9 +84,13 @@ class HistoryAdmin(admin.ModelAdmin):
             else:
                 html = mark_safe('''
                 <i>Груз {cargo} не может быть доставлен на склад!</i><br>
-                Название склада: <b>{store}</b><br>'''.format(
+                Название склада: <b>{store}</b><br>
+                Полигон склада: {polygon}<br>
+                Координаты: {coordinates}'''.format(
                     cargo=q.cargo,
-                    store=q.store.title
+                    store=q.store.title,
+                    polygon=q.store.parse_polygon,
+                    coordinates=q.coordinates,
                 ))
                 messages.warning(request, html)
     do_calc.short_description = 'Расчитать и показать результат'

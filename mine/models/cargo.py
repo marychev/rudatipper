@@ -1,5 +1,3 @@
-import math
-
 from django.db import models
 from mine.models import Mine, BaseOre
 from tipper.models import Tipper
