@@ -4,4 +4,4 @@ from store.models import Store
 
 @admin.register(Store)
 class StoreAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['title', 'polygon', 'max_mass', 'mass', 'sio2', 'fe']
