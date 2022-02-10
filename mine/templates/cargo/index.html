@@ -1,4 +1,6 @@
+{% extends "cargo/base.html" %}
 
+{% block main %}
 {% if cargos %}
     <ul>
     {% for cargo in cargos %}
@@ -8,7 +10,6 @@
 {% else %}
     <p>No cargos are available.</p>
 {% endif %}
-
 
 <details>
     <p>
@@ -71,3 +72,5 @@
         если не получится - опубликовать на гитхабе или просто прислать архив с исходниками.
     </p>
 </details>
+{% endblock %}
+

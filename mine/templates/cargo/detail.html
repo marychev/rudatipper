@@ -1,21 +1,13 @@
-<h1>{{ cargo }}</h1>
-<ul>
-    <li>{{ cargo.mine }}</li>
-    <li>{{ cargo.tipper }}</li>
-    <li>Текущий вес: {{ cargo.mass }}</li>
-    <li>Макс. вес: </li>
-    <li>SiO2: {{ cargo.sio2 }}</li>
-    <li>Fe: {{ cargo.fe }}</li>
-    <li>Создан: {{ cargo.created }}</li>
-</ul>
+{% extends "cargo/base.html" %}
 
+{% block main %}
 <form action="{% url 'cargo:calc' cargo.id %}" method="post">
 {% csrf_token %}
 <fieldset>
     <legend><h3>{{ cargo }}</h3></legend>
     {% if error_message %}<h3>{{ error_message }}</h3>{% endif %}
 
-    <table>
+    <table border="1">
         <caption>Расчет</caption>
         <tr>
             <th>бортовой номер</th>
@@ -45,3 +37,4 @@
 </fieldset>
 <input type="submit" value="Расчитать">
 </form>
+{% endblock %}
