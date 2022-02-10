@@ -8,6 +8,7 @@ class History(models.Model):
     class Meta:
         verbose_name = 'История доставки на склад'
         verbose_name_plural = 'История доставки на склады'
+        unique_together = ('store', 'cargo')
 
     store = models.ForeignKey(Store, verbose_name='Склад', on_delete=models.CASCADE)
     cargo = models.ForeignKey(Cargo, verbose_name='Груз', on_delete=models.CASCADE)
@@ -42,7 +43,7 @@ class History(models.Model):
         return self.enter_to_polygon
 
     def clean(self):
-        if len(self.parse_coordinates) != 2:
+        if self.coordinates and len(self.parse_coordinates) != 2:
             raise ValidationError('Неверный формат! Значения должны быть формата: Х У')
 
     def calc_mass(self) -> int:

@@ -1,3 +1,38 @@
-from django.shortcuts import render
+from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 
-# Create your views here.
+from mine.models import Mine, Cargo
+from tipper.models import Tipper
+from store.models import Store, History
+
+
+def index(request):
+    return render(request, 'cargo/index.html', {
+        'cargos': Cargo.objects.all(),
+        'mines': Mine.objects.all(),
+        'tippers': Tipper.objects.all(),
+        'stores': Store.objects.all(),
+        'histories': History.objects.all()
+    })
+
+
+def detail(request, cargo_id):
+    cargo = get_object_or_404(Cargo, pk=cargo_id)
+    return render(request, 'cargo/detail.html', {'cargo': cargo})
+
+
+def results(request, cargo_id):
+    cargo = get_object_or_404(Cargo, pk=cargo_id)
+    return render(request, 'cargo/results.html', {'cargo': cargo})
+
+
+def calc(request, cargo_id):
+    cargo = get_object_or_404(Cargo, pk=cargo_id)
+    return render(request, 'cargo/detail.html', {
+        'cargo': cargo,
+        'error_message': "You didn't select a choice.",
+        "table_2": "table_2",
+    })
+    # else:
+    # return HttpResponseRedirect(reverse('cargo:detail', args=(cargo.id,)))

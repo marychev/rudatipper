@@ -19,7 +19,7 @@ class Store(BaseOre):
 
     @classmethod
     def to_tuple(cls, coordinates: str) -> tuple:
-        coordinates = coordinates.split()
+        coordinates = coordinates.split() if isinstance(coordinates, str) else []
         if len(coordinates) == 2 and coordinates[0].isdigit() and coordinates[1].isdigit():
             coordinates = int(coordinates[0]), int(coordinates[1])
             return tuple(coordinates)

@@ -1,0 +1,47 @@
+<h1>{{ cargo }}</h1>
+<ul>
+    <li>{{ cargo.mine }}</li>
+    <li>{{ cargo.tipper }}</li>
+    <li>Текущий вес: {{ cargo.mass }}</li>
+    <li>Макс. вес: </li>
+    <li>SiO2: {{ cargo.sio2 }}</li>
+    <li>Fe: {{ cargo.fe }}</li>
+    <li>Создан: {{ cargo.created }}</li>
+</ul>
+
+<form action="{% url 'cargo:calc' cargo.id %}" method="post">
+{% csrf_token %}
+<fieldset>
+    <legend><h3>{{ cargo }}</h3></legend>
+    {% if error_message %}<h3>{{ error_message }}</h3>{% endif %}
+
+    <table>
+        <caption>Расчет</caption>
+        <tr>
+            <th>бортовой номер</th>
+            <th>модель</th>
+            <th>макс. грузоподъемность</th>
+            <th>текущий вес</th>
+            <th>перегруз %</th>
+            <th>координаты разгрузки “X Y”</th>
+        </tr>
+        <tr>
+            <td>{{ cargo.tipper.number }}</td>
+            <td>{{ cargo.tipper.tmodel.code }}</td>
+            <td>{{ cargo.max_mass }}</td>
+            <td>{{ cargo.mass }}</td>
+            <td>{{ cargo.overload }} %</td>
+            <td><input value="0 1"></td>
+        </tr>
+    </table>
+
+    {% if table_2 %}<h3>{{ table_2 }}</h3>{% endif %}
+
+    {% comment %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endcomment %}
+
+</fieldset>
+<input type="submit" value="Расчитать">
+</form>
