@@ -29,10 +29,11 @@ def results(request, cargo_id):
 
 def calc(request, cargo_id):
     cargo = get_object_or_404(Cargo, pk=cargo_id)
-    return render(request, 'cargo/detail.html', {
-        'cargo': cargo,
-        'error_message': "You didn't select a choice.",
-        "table_2": "table_2",
+    print("!!")
+    return render(request, 'cargo/index.html', {
+        'cargos': [cargo],
+        'result_calc_success': [cargo],
+        "result_calc_warning": [cargo],
     })
     # else:
     # return HttpResponseRedirect(reverse('cargo:detail', args=(cargo.id,)))
