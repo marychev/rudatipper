@@ -77,7 +77,7 @@
         </table>
 
         {% if cargos.count > 1 %}
-            <a class="btn btn-block btn-outline-dark" href="*" role="button">Расчитать всё</a>
+            <!-- <a class="btn btn-block btn-outline-dark" href="*" role="button">Расчитать всё</a> -->
         {% else %}
             <a class="btn btn-block btn-outline-dark" href="/" role="button">Все грузы</a>
         {% endif %}
@@ -111,8 +111,8 @@
                             {{ res.after_characteristics }}<br>
                             <small class="text-muted">{{ res.before_characteristics }}</small>
                         </td>
-                        <td>
-                            <a class="btn btn-secondary" href="#" role="button">Отправить [x]</a>
+                        <td class="text-center">
+                            <button class="btn btn-outline-secondary" disabled>Отправить</button>
                         </td>
                     </tr>
                     {% endfor %}
