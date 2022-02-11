@@ -54,14 +54,10 @@
                             <td>{{ cargo.max_mass }}</td>
                             <td>{{ cargo.mass }}</td>
                             <td>{{ cargo.overload }} %</td>
-                            <td>
-                                <input class="form-control" name="coordinates" placeholder="Формат: X Y" pattern="[0-9]+\s[0-9]+" required
-                                       value="{{ coordinates }}">
+                            <td><input class="form-control" name="coordinates" placeholder="Формат: X Y"
+                                       pattern="[0-9]+\s[0-9]+" required value="{{ coordinates }}">
                             </td>
-                            <td>
-                                <!-- <a class="btn btn-warning" role="button" href="/cargo/{{ cargo.id }}">Расчитать</a> -->
-                                <button type="submit" class="btn btn-outline-warning">Расчитать</button>
-                            </td>
+                            <td><button type="submit" class="btn btn-outline-warning">Расчитать</button></td>
                         </tr>
                     </form>
                     {% endfor %}
@@ -72,12 +68,8 @@
                     <td>-</td>
                     <td>-</td>
                     <td>- %</td>
-                    <td>
-                        <input class="form-control" placeholder="Формат: X Y" disabled readonly>
-                    </td>
-                    <td>
-                        <button class="btn btn-outline-warning" disabled>Расчитать</button>
-                    </td>
+                    <td><input class="form-control" placeholder="Формат: X Y" disabled readonly></td>
+                    <td><button class="btn btn-outline-warning" disabled>Расчитать</button></td>
                 </tr>
                 {% endif %}
 
