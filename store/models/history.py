@@ -46,14 +46,58 @@ class History(models.Model):
         if self.coordinates and len(self.parse_coordinates) != 2:
             raise ValidationError('Неверный формат! Значения должны быть формата: Х У')
 
-    def calc_mass(self) -> int:
+    def calc_after_mass(self) -> int:
         return self.store.mass + self.cargo.mass
 
-    def calc_characteristics(self) -> dict:
-        sio2 = self.store.sio2 + self.cargo.sio2
-        fe = self.store.fe + self.cargo.fe
+    @classmethod
+    def percent_to_mass(cls, percent, mass):
+        return percent * mass / 100
 
-        return {
-            'sio2': sio2,
-            'fe': fe
+    @classmethod
+    def mass_to_percent(cls, mass, after_mass):
+        return round((mass * 100) / after_mass, 2)
+
+    def calc(self) -> dict:
+        # Масса хранилища и масса характеристик
+        store_sio2_mass = self.percent_to_mass(self.store.sio2, self.store.mass)
+        store_fe_mass = self.percent_to_mass(self.store.fe, self.store.mass)
+        store_z_percent = 100 - float(self.store.sio2 + self.store.fe)
+        store_z_mass = self.percent_to_mass(store_z_percent, self.store.mass)
+
+        # Масса груза и масса характеристик
+        cargo_sio2_mass = self.percent_to_mass(self.cargo.sio2, self.cargo.mass)
+        cargo_fe_mass = self.percent_to_mass(self.cargo.fe, self.cargo.mass)
+        cargo_z_percent = 100 - float(self.cargo.sio2 + self.cargo.fe)
+        cargo_z_mass = self.percent_to_mass(cargo_z_percent, self.cargo.mass)
+
+        # Общая масса груза и общая масса характеристик и процентного соотношения
+        after_sio2_mass = store_sio2_mass + cargo_sio2_mass
+        after_fe_mass = store_fe_mass + cargo_fe_mass
+        after_mass = after_sio2_mass + after_fe_mass + (store_z_mass + cargo_z_mass)
+
+        after_sio2_percent = self.mass_to_percent(after_sio2_mass, after_mass)
+        after_fe_percent = self.mass_to_percent(after_fe_mass, after_mass)
+
+        result = {
+            'has_valid': self.enter_to_polygon,
+            'error': '',
+            'store': self.store,
+            'before_mass': self.store.mass,
+            'after_mass': self.store.mass,
+            'before_characteristics': '{}% SiO2, {}% Fe'.format(self.store.sio2, self.store.fe),
+            'after_characteristics': '{}% SiO2, {}% Fe'.format(
+                after_sio2_percent,
+                after_fe_percent
+            ),
         }
+
+        if self.enter_to_polygon:
+            result.update({
+                'after_mass': self.calc_after_mass()
+            })
+        else:
+            result.update({
+                'error': 'Не возможно отправить груз {} на склад {}.'.format(self.cargo, self.store.polygon)
+            })
+
+        return result

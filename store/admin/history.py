@@ -61,24 +61,21 @@ class HistoryAdmin(admin.ModelAdmin):
     def do_calc(self, request, queryset):
         for q in queryset:
             if q.can_ship_to_store:
-                new_mass = q.calc_mass()
-                characteristics = q.calc_characteristics()
-                characteristics_after_unloading = 'SiO2: {} %, Fe: {} %'.format(
-                    characteristics['sio2'],
-                    characteristics['fe']
-                )
+                calc = q.calc()
 
                 html = mark_safe('''
                 <i>Груз {cargo} успешно может быть доставлен на склад!</i><br>
                 Название склада: <b>{store}</b><br> 
                 Объем до разгрузки, т: <b>{current_mass}</b><br>
                 Объем после разгрузки, т: <b>{new_mass}</b><br>
-                Качественные характеристики после разгрузки: <b>{characteristics_after_unloading}</b>'''.format(
+                Качественные характеристики после разгрузки: <b>{after_characteristics}</b>
+                <small>{before_characteristics}</small>'''.format(
                     cargo=q.cargo,
-                    store=q.store.title,
-                    current_mass=q.store.mass,
-                    new_mass=new_mass,
-                    characteristics_after_unloading=characteristics_after_unloading
+                    store=calc.get('store', ''),
+                    current_mass=calc.get('before_mass', ''),
+                    new_mass=calc.get('after_mass', ''),
+                    after_characteristics=calc.get('after_characteristics', ''),
+                    before_characteristics=calc.get('before_characteristics', '')
                 ))
                 messages.success(request, html)
             else:

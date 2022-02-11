@@ -4,9 +4,9 @@
 
 
     <div class="jumbotron">
-        <section class="lead container">
-            <h1 class="display-3">Ruda Tipper </h1>
-            <h2>Приложение для расчёта или отправки самосвала с грузом на полигон склада </h2>
+        <section class="container">
+            <h1 class="display-4"><a href="/">Ruda Tipper</a></h1>
+            <h3>Приложение для расчёта или отправки самосвала с грузом на полигон склада </h3>
             <hr class="my-4">
 
             <p>Чтобы расчитать или отправить загруженный самосвал на определенный склад Вы должны:</p>
@@ -23,17 +23,12 @@
                 <i class="small">Данные для входа в <a href="/admin" target="_blank">админ.панель</a>:</i>
                 <span class="badge badge-secondary">admin / admin888</span>
             </p>
-
-
         </section>
     </div>
 
     <section class="container mb-4 mt-4">
-        <h3>Заполните координаты для расчета доставки груза (самосвала с рудой)</h3>
+        <h4>Заполните координаты для расчета доставки груза (самосвала с рудой)</h4>
         <p class="text-muted">Вы видете все сформированные, еще не отправленные загруженные самосвалы</p>
-
-
-
 
             <table class="table table-striped table-hover table-dark">
             <caption>Таблица 1: Самосвал с грузом и координаты для расчета</caption>
@@ -60,11 +55,12 @@
                             <td>{{ cargo.mass }}</td>
                             <td>{{ cargo.overload }} %</td>
                             <td>
-                                <input class="form-control" placeholder="Формат: X Y" pattern="[0-9]+\s[0-9]+" required>
+                                <input class="form-control" name="coordinates" placeholder="Формат: X Y" pattern="[0-9]+\s[0-9]+" required
+                                       value="{{ coordinates }}">
                             </td>
                             <td>
                                 <!-- <a class="btn btn-warning" role="button" href="/cargo/{{ cargo.id }}">Расчитать</a> -->
-                                <button type="submit" class="btn btn-warning">Расчитать</button>
+                                <button type="submit" class="btn btn-outline-warning">Расчитать</button>
                             </td>
                         </tr>
                     </form>
@@ -80,16 +76,24 @@
                         <input class="form-control" placeholder="Формат: X Y" disabled readonly>
                     </td>
                     <td>
-                        <button class="btn btn-warning" disabled>Расчитать</button>
+                        <button class="btn btn-outline-warning" disabled>Расчитать</button>
                     </td>
                 </tr>
                 {% endif %}
+
             </tbody>
         </table>
 
+        {% if cargos.count > 1 %}
+            <a class="btn btn-block btn-outline-dark" href="*" role="button">Расчитать всё</a>
+        {% else %}
+            <a class="btn btn-block btn-outline-dark" href="/" role="button">Все грузы</a>
+        {% endif %}
+        <a class="btn btn-block btn-outline-secondary" href="." role="button">Очистить</a>
         <hr>
     </section>
 
+    {% if result_success or result_warning %}
     <section class="container mb-4 mt-4">
         <h4>Результат расчета</h4>
 
@@ -105,44 +109,48 @@
               </tr>
             </thead>
             <tbody>
-                {% if result_calc_success %}
-                <tr>
-                    <td>Склад 000</td>
-                    <td>900</td>
-                    <td>900</td>
-                    <td>
-                        34% SiO2, 65% Fe <br>
-                        <small>33% SiO2, 66% Fe</small>
-                    </td>
-                    <td>
-                        <a class="btn btn-secondary" href="#" role="button">Отправить</a>
-                    </td>
-                </tr>
-                {% elif result_calc_warning %}
-                <tr class="bg-warning">
-                    <td>Склад 000</td>
-                    <td>900</td>
-                    <td> - </td>
-                    <td>
-                        <small>33% SiO2, 66% Fe</small>
-                    </td>
-                    <td>
-                        Не возможно отправить груженный самосвал на этот склад.
-                    </td>
-                </tr>
-            {% else %}
-                <p class="text-muted">Результат расчета будет выведен после нажатия на кнопку Расчитать</p>
-            {% endif %}
+                {% if result_success %}
+                    {% for res in result_success %}
+                    <tr class="table-success">
+                        <td>{{ res.store }}</td>
+                        <td>{{ res.before_mass }}</td>
+                        <td>{{ res.after_mass }}</td>
+                        <td>
+                            {{ res.after_characteristics }}<br>
+                            <small class="text-muted">{{ res.before_characteristics }}</small>
+                        </td>
+                        <td>
+                            <a class="btn btn-secondary" href="#" role="button">Отправить [x]</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                {% if result_warning %}
+                    {% for res in result_warning %}
+                    <tr class="table-warning">
+                        <td>{{ res.store }}</td>
+                        <td>{{ res.before_mass }}</td>
+                        <td>{{ res.after_mass }}</td>
+                        <td>
+                            {{ res.after_characteristics }}<br>
+                            <small class="text-muted">{{ res.before_characteristics }}</small>
+                        </td>
+                        <td><small class="text-danger">{{ res.error }}</small></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
             </tbody>
         </table>
         <hr>
         </section>
+    {% endif %}
 
     <section class="jumbotron">
-        <p class="container text-center mt-4">
-            <a class="col m-1 btn btn-primary btn-lg" href="#" role="button">Создать склад</a>
-            <a class="col m-1 btn btn-primary btn-lg" href="#" role="button">Создать самосвал</a>
-            <a class="col m-1 btn btn-primary btn-lg" href="#" role="button">Создать груз</a>
+        <p class="container text-center">
+            <a class="col m-1 btn btn-outline-primary" href="/admin/mine/cargo/" target="_blank" role="button">Создать груз</a>
+            <a class="col m-1 btn btn-outline-primary" href="/admin/tipper/tipper" role="button" target="_blank">Создать самосвал</a>
+            <a class="col m-1 btn btn-outline-primary" href="/admin/store/store/" role="button" target="_blank">Создать склад</a>
+            <a class="col m-1 btn btn-outline-primary" href="/admin/mine/mine/" role="button" target="_blank">Создать шахту</a>
         </p>
     </section>
 
