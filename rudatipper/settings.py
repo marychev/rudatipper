@@ -3,10 +3,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-l0-)0l-@gsh5-02)6sb_v#o!en7j&(yc0$)_ckhj4@bi&p_q6v'
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
 
+ALLOWED_HOSTS = ['rudatipper.homebio.ru', '127.0.0.1']
 
 # Application definition
 
