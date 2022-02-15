@@ -1,10 +1,11 @@
 import os
 from pathlib import Path
+import django_heroku
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-l0-)0l-@gsh5-02)6sb_v#o!en7j&(yc0$)_ckhj4@bi&p_q6v'
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['rudatipper.homebio.ru', '127.0.0.1']
@@ -92,7 +93,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
