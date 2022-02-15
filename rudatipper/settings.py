@@ -7,8 +7,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l0-)0l-@gsh5-02)6sb_v#o!en7j&(yc0$)_ckhj4@bi&p_q6v'
 DEBUG = True
 
-
-# ALLOWED_HOSTS = ['rudatipper.homebio.ru', '127.0.0.1']
 ALLOWED_HOSTS = ['https://rudatipper.herokuapp.com/', '127.0.0.1', 'localhost', '*']
 
 # Application definition
@@ -88,8 +86,6 @@ USE_I18N = True
 USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
